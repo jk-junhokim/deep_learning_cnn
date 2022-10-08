@@ -1,4 +1,5 @@
-from numpy_practice import *
+import numpy as np
+from library_practice.matplotlib_practice import *
 
 
 
