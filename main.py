@@ -1,5 +1,10 @@
 import numpy as np
-from library_practice.matplotlib_practice import *
+# import matplotlib.pyplot as plt
+# from matplotlib.image import imread
+
+
+
+
 
 
 
