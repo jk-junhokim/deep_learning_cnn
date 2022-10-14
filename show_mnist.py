@@ -20,3 +20,4 @@ img = img.reshape(28, 28) # original matrix dimension
 print(img.shape) # (28, 28)
 
 img_show(img)
+
