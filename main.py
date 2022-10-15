@@ -4,7 +4,9 @@
 # from activation_functions.activation_functions import *
 # from check_mnist import *
 # from show_mnist import *
-from neuralnet_mnist_vanilla.neuralnet_mnist import *
+# from neuralnet_mnist_vanilla.neuralnet_mnist import *
+# from loss_functions.sum_squares_error import *
+from loss_functions.cross_entropy_error import *
 
 
 
