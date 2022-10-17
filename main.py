@@ -7,7 +7,8 @@
 # from neuralnet_mnist_vanilla.neuralnet_mnist import *
 # from loss_functions.sum_squares_error import *
 # from loss_functions.cross_entropy_error import *
-from gradient_functions.numerical_gradient import *
+# from gradient_functions.numerical_gradient import *
+from gradient_functions.gradient_descent import *
 
 
 

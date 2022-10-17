@@ -25,9 +25,7 @@ def numerical_gradient(f, x):
 test1 = numerical_gradient(function_2, np.array([3.0, 4.0]))
 test2 = numerical_gradient(function_2, np.array([0.0, 2.0]))
 test3 = numerical_gradient(function_2, np.array([3.0, 0.0]))
-print(test1)
-print(test2)
-print(test3)
-
-
+# print(test1)
+# print(test2)
+# print(test3)
 
