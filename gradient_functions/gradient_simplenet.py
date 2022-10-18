@@ -25,6 +25,26 @@ class simpleNet:
 
         return loss
 
+for i in range(3):
+    net = simpleNet()
+    i = i + 1
+    weights = net.W
+    print("<Trial " + str(i) + ">")
+    print("Weights :")
+    print(weights)
+    x = np.array([0.6, 0.9])
+    p = net.predict(x)
+    print("Softmax Predictions :")
+    print(p)
+    t = np.array([0, 0, 1]) # answer label
+    loss = net.loss(x, t)
+    print("Loss :")
+    print(loss)
+    print("")
+    
+
+
+"""    
 net = simpleNet()
 print(net.W) # initialized weights
 x = np.array([0.6, 0.9])
@@ -32,11 +52,15 @@ p = net.predict(x)
 print(p)
 print(np.argmax(p))
 t = np.array([0, 0, 1]) # answer label
-net.loss(x, t)
+loss = net.loss(x, t)
+print(loss)
 
 def f(W):
     return net.loss(x, t)
 
 dW = numerical_gradient(f, net.W)
 print(dW)
+"""
 
+# f = lambda w: net.loss(x, t)
+# dW = numerical_gradient(f, net.W)
