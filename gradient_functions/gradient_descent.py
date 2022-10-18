@@ -9,7 +9,12 @@ def gradient_descent(f, init_x, lr, step_num):
         grad = numerical_gradient(f, x)
         x -= lr * grad
         
-    return x
+    return x # this is a shallow copy of init_x
+
+"""
+The gradient_descent function returns a updated init_x variable.
+You need to initialze the init_x variable for each test.
+"""
 
 # learning rate = 0.1
 init_x = np.array([-3.0, 4.0]) # equal starting point
