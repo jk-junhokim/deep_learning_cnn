@@ -1,6 +1,7 @@
 import numpy as np
 from mnist_dataset.mnist import load_mnist
 from two_layer_net import TwoLayerNet
+import matplotlib.pyplot as plt
 
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize = True, one_hot_label = True)
 
@@ -32,4 +33,13 @@ for i in range(iters_num):
     loss = network.loss(x_batch, t_batch)
     train_loss_list.append(loss)
     
-
+# Draw Graph
+markers = {'train': 'o', 'test': 's'}
+x = np.arange(len(train_acc_list))
+plt.plot(x, train_acc_list, label='train acc')
+plt.plot(x, test_acc_list, label='test acc', linestyle='--')
+plt.xlabel("epochs")
+plt.ylabel("accuracy")
+plt.ylim(0, 1.0)
+plt.legend(loc='lower right')
+plt.show()
