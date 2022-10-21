@@ -3,7 +3,7 @@ import sys, os
 sys.path.append(os.pardir)  # 부모 디렉터리의 파일을 가져올 수 있도록 설정
 import numpy as np
 import pickle
-from dataset.mnist import load_mnist
+from mnist_dataset.mnist import load_mnist
 from activation_functions.activation_functions import sigmoid, softmax
 
 def get_data():
