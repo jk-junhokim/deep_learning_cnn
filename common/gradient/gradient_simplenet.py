@@ -1,9 +1,8 @@
 import sys, os
 sys.path.append(os.pardir)
 import numpy as np
-from activation_functions.activation_functions import softmax
-from loss_functions.cross_entropy_error import cross_entropy_error
-from gradient_functions.numerical_gradient import numerical_gradient
+from common.function.functions import softmax, cross_entropy_error
+from common.gradient.gradients import numerical_gradient
 
 """
 Create an array of the given shape and
@@ -24,6 +23,7 @@ class simpleNet:
         loss = cross_entropy_error(y, t) # calculates the error between answer and prediction
 
         return loss
+
 
 for i in range(3):
     net = simpleNet()
@@ -47,6 +47,7 @@ for i in range(3):
 Numerical Gradient Function returns the slope (differentiation)
 at the given point of net.W
 """
+
 net_ex = simpleNet()
 weights = net.W
 input_x = np.array([0.6, 0.9])
