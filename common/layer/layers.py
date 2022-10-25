@@ -1,4 +1,5 @@
 import numpy as np
+from common.function.functions import *
 
 class AddLayer:
     def __init__(self):
@@ -68,13 +69,13 @@ class Sigmoid:
 
 class Affine:
     def __init__(self, w, b):
-        self.W = W
+        self.W = w
         self.b = b
         self.x = None
-        slef.dW = None
+        self.dW = None
         self.db = None
 
-    def forward(self, x):
+    def forward(self, x, b):
         self.x = x
         out = np.dot(x. self.W) + b
 

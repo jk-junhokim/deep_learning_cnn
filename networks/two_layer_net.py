@@ -1,8 +1,10 @@
 import sys, os
 sys.path.append(os.pardir)
 import numpy as np
-from common.function.functions import cross_entropy_error, sigmoid, relu, sum_squares_error, softmax
+from common.function.functions import *
+from common.layer.layers  import *
 from common.gradient.gradients import numerical_gradient
+from collections import OrderedDict
 
 class TwoLayerNet:
     def __init__(self, input_size, hidden_size, output_size, weight_init_std = 0.01):
@@ -14,27 +16,32 @@ class TwoLayerNet:
         self.params['W2'] = weight_init_std * np.random.randn(hidden_size, output_size)
         self.params['b2'] = np.zeros(output_size)
 
-    def predict(self, x):
-        W1, W2 = self.params['W1'], self.params['W2']
-        b1, b2 = self.params['b1'], self.params['b2']
+        # create layers
+        self.layers = OrderedDict()
+        self.layers["Affine1"] = Affine(self.params['W1'], self.params['b1'])
+        self.layers['Relu1'] = Relu()
+        self.layers['Affine2'] = Affine(self.params['W2'], self.params['b2'])
 
-        a1 = np.dot(x, W1) + b1
-        z1 = sigmoid(a1)
-        a2 = np.dot(z1, W2) + b2
-        y = softmax(a2)
+        self.lastLayer = SoftmaxWithLoss()
         
-        return y
+
+    def predict(self, x):
+        for layer in self.layers.values():
+            x = layer.forward(x)
+        
+        return x
 
     # x : input data, t : answer label
     def loss(self, x, t):
         y = self.predict(x)
         
-        return cross_entropy_error(y, t)
+        return self.lastLayer.forward(y, t)
 
     def accuracy(self, x, t):
         y = self.predict(x)
         y = np.argmax(y, axis = 1)
-        t = np.argmax(t, axis = 1)
+        if t.ndim != 1:
+            t = np.argmax(t, axis = 1)
 
         accuracy = np.sum(y == t) / float(x.shape[0])
         
@@ -51,40 +58,26 @@ class TwoLayerNet:
 
         return grads
 
+    def gradient(self, x, t):
+        # forward
+        self.loss(x, t)
 
-##### TwoLayerNet TEST #####
-"""
-net = TwoLayerNet(input_size = 784, hidden_size = 100, output_size = 10) # network initialization
+        # backward
+        dout = 1
+        dout = self.lastLayer.backward(dout)
 
-W1_shape = net.params['W1'].shape # (784, 100)
-b1_shape = net.params['b1'].shape # (100, )
-W2_shape = net.params['W2'].shape # (100, 10)
-b2_shape = net.params['b2'].shape # (10, )
+        layers = list(self.layers.values())
+        layers.reverse()
+        for layer in layers:
+            dout = layer.backward(dout)
 
-print("W1 shape :")
-print(W1_shape)
-print("b1 shape :")
-print(b1_shape)
-print("W2 shape :")
-print(W2_shape)
-print("b2 shape :")
-print(b2_shape)
+        # save gradient values
+        grads = {}
+        grads['W1'] = self.layers['Affine1'].dW
+        grads['b1'] = self.layers['Affine1'].db
+        grads['W2'] = self.layers['Affine2'].dW
+        grads['b2'] = self.layers['Affine2'].db
 
-##### PREDICTION TEST #####
-x = np.random.rand(100, 784) # input data size = 100
-y = net.predict(x)
-# print("Prediction Test Results :")
-# print(y)
+        return grads
 
-##### GRADIENT TEST #####
-x = np.random.rand(100, 784) # input data size = 100
-t = np.random.rand(100, 10) # answer label size = 100
-
-# grads = net.numerical_gradient(x, t)
-
-grads['W1'].shape # (784, 100)
-grads['b1'].shape # (100, )
-grads['W2'].shape # (100, 10)
-grads['b2'].shape # (10, )
-"""
 
