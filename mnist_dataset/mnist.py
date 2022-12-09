@@ -18,13 +18,14 @@ key_file = {
     'test_label':'t10k-labels-idx1-ubyte.gz'
 }
 
+# this sets the dataset directory
 dataset_dir = os.path.dirname(os.path.abspath(__file__))
-save_file = dataset_dir + "/mnist.pkl"
+save_file = dataset_dir + "/mnist.pkl" # pickle file
 
-train_num = 60000
-test_num = 10000
-img_dim = (1, 28, 28)
-img_size = 784
+train_num = 60000 # train data. to build accurate model
+test_num = 10000 # test data. to test real world accuracy
+img_dim = (1, 28, 28) # how the data info is inputed (as 3d matrices)
+img_size = 784 # going to span out the 3d matrix into 1d array
 
 
 def _download(file_name):
@@ -37,7 +38,7 @@ def _download(file_name):
     urllib.request.urlretrieve(url_base + file_name, file_path)
     print("Done")
     
-def download_mnist():
+def download_mnist(): # download image info as originally given
     for v in key_file.values():
        _download(v)
         
@@ -58,29 +59,38 @@ def _load_img(file_name):
     with gzip.open(file_path, 'rb') as f:
             data = np.frombuffer(f.read(), np.uint8, offset=16)
     data = data.reshape(-1, img_size)
+    # used numpy reshape function to change 3d matrix
+    # into 1d 1x784 array
     print("Done")
     
     return data
     
 def _convert_numpy():
     dataset = {}
+    # the key_file data is already saved as dictionary above
     dataset['train_img'] =  _load_img(key_file['train_img'])
     dataset['train_label'] = _load_label(key_file['train_label'])    
     dataset['test_img'] = _load_img(key_file['test_img'])
     dataset['test_label'] = _load_label(key_file['test_label'])
+
+    # all the image data is now converted into a numpy type
+    # 1x784 array per image
     
     return dataset
 
 def init_mnist():
     download_mnist()
-    dataset = _convert_numpy()
+    dataset = _convert_numpy() # now we have what we want (1x784)
     print("Creating pickle file ...")
-    with open(save_file, 'wb') as f:
+    with open(save_file, 'wb') as f: # save to pickle file for convenience
         pickle.dump(dataset, f, -1)
     print("Done!")
 
-def _change_one_hot_label(X):
-    T = np.zeros((X.size, 10))
+# one hot encoding is only for the label
+# the numpy type image data set is a 1x784 array
+# with 1~255 int type values per index (this is just how an image is formatted)
+def _change_one_hot_label(X): # X is the number of answer labels
+    T = np.zeros((X.size, 10)) # per answer label we created a 10 empty space array to save the one hot encoded value
     for idx, row in enumerate(T):
         row[X[idx]] = 1
         
@@ -92,15 +102,14 @@ def load_mnist(normalize=True, flatten=True, one_hot_label=False):
     
     Parameters
     ----------
-    normalize : 이미지의 픽셀 값을 0.0~1.0 사이의 값으로 정규화할지 정한다.
+    normalize : re-numbers all image pixel values to 0.0~1.0
     one_hot_label : 
-        one_hot_label이 True면、레이블을 원-핫(one-hot) 배열로 돌려준다.
-        one-hot 배열은 예를 들어 [0,0,1,0,0,0,0,0,0,0]처럼 한 원소만 1인 배열이다.
-    flatten : 입력 이미지를 1차원 배열로 만들지를 정한다. 
+        If one_hot_label is True, the funtion return one-hot encoded array i.e. [0,0,1,0,0,0,0,0,0,0]
+    flatten : changes image matrix into 1d 
     
     Returns
     -------
-    (훈련 이미지, 훈련 레이블), (시험 이미지, 시험 레이블)
+    (train image, train label), (test image, test label)
     """
     if not os.path.exists(save_file):
         init_mnist()
