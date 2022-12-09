@@ -19,3 +19,4 @@ grad_backpropagation = network.gradient(x_batch, t_batch)
 for key in grad_multivariable.keys():
     diff = np.average(np.abs(grad_backpropagation[key] - grad_multivariable[key]))
     print(key + ":" + str(diff))
+    
