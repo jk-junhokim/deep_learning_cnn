@@ -20,7 +20,6 @@ Hidden Layer w/ 50 perceptrons
 Output is fixed to 10. One hot encoded.
 """
 network = TwoLayerNet(input_size = 784, hidden_size = 50, output_size = 10)
-# 784 -> 50 -> 10
 
 # Hyperparameters
 iters_num = 10000 # iterations
@@ -29,9 +28,9 @@ batch_size = 100
 learning_rate = 0.1
 
 # Tracking Data
-train_loss_list = [] # should decrease
-train_acc_list = [] # should increase
-test_acc_list = [] # should increase
+train_loss_list = []
+train_acc_list = []
+test_acc_list = []
 
 # Repeats per Epoch
 iter_per_epoch = max(train_size / batch_size, 1)
