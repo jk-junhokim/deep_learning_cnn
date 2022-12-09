@@ -54,15 +54,8 @@ class TwoLayerNet:
     # x : input data, t : answer label
     def loss(self, x, t):
         y = self.predict(x)
-        # uses the numerical prediction value of x
-        # which went through the Affine layer
 
-        # use the outcome (y) to compare with the actual answer label (t)
-        # used for backpropagation method
         return self.lastLayer.forward(y, t)
-
-        # this return statement is for multivariable gradient descent method
-        # return cross_entropy_error(y, t)
 
     def accuracy(self, x, t):
         y = self.predict(x)
@@ -74,21 +67,6 @@ class TwoLayerNet:
         
         return accuracy
 
-    # the numerical(calculus) method
-    def multivariable_gradient(self, x, t):
-        loss_W = lambda W: self.loss(x, t)
-        # loss_w is a lambda function object 
-        # which is the CEE function at inputs (x, t)
-
-        grads = {}
-        grads['W1'] = numerical_gradient(loss_W, self.params['W1']) # numerical_gradient function is imported
-        grads['b1'] = numerical_gradient(loss_W, self.params['b1'])
-        grads['W2'] = numerical_gradient(loss_W, self.params['W2'])
-        grads['b2'] = numerical_gradient(loss_W, self.params['b2'])
-
-        return grads
-
-    # the backpropagation method
     def gradient(self, x, t):
         # forward
         self.loss(x, t)
