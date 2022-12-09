@@ -1,10 +1,11 @@
 import sys, os
-sys.path.append(os.pardir)
 import numpy as np
-from common.function.functions import *
-from common.layer.layers  import *
-from common.gradient.gradients import numerical_gradient
 from collections import OrderedDict
+# sys.path.append(os.pardir)
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from common.functions import *
+from common.gradients import numerical_gradient
+from common.layers import *
 
 class TwoLayerNet:
     def __init__(self, input_size, hidden_size, output_size, weight_init_std = 0.01):
@@ -25,18 +26,19 @@ class TwoLayerNet:
         self.layers['Relu1'] = Relu() # activation function (only one hidden layer)
         self.layers['Affine2'] = Affine(self.params['W2'], self.params['b2'])
 
+        # separate layer (not in self.layers). need to call indepently
         self.lastLayer = SoftmaxWithLoss() # categorization function
         
     def predict(self, x): # returns a numerical value
-        """
+
         # The backward propagation version
         for layer in self.layers.values():
             x = layer.forward(x)
         
         return x
-        """
 
-        # """
+
+        """
         # The multivariable gradient version
         W1, W2 = self.params['W1'], self.params['W2']
         b1, b2 = self.params['b1'], self.params['b2']
@@ -44,11 +46,10 @@ class TwoLayerNet:
         a1 = np.dot(x, W1) + b1
         z1 = sigmoid(a1)
         a2 = np.dot(z1, W2) + b2
-        y = softmax(a2)
+        y = softmax(a2) # softmax is probability for each outcome
 
         return y
-        # """
-
+        """
 
     # x : input data, t : answer label
     def loss(self, x, t):
@@ -57,8 +58,11 @@ class TwoLayerNet:
         # which went through the Affine layer
 
         # use the outcome (y) to compare with the actual answer label (t)
-        # return self.lastLayer.forward(y, t)
-        return cross_entropy_error(y, t)
+        # used for backpropagation method
+        return self.lastLayer.forward(y, t)
+
+        # this return statement is for multivariable gradient descent method
+        # return cross_entropy_error(y, t)
 
     def accuracy(self, x, t):
         y = self.predict(x)
@@ -74,7 +78,7 @@ class TwoLayerNet:
     def multivariable_gradient(self, x, t):
         loss_W = lambda W: self.loss(x, t)
         # loss_w is a lambda function object 
-        # which is a CEE function
+        # which is the CEE function at inputs (x, t)
 
         grads = {}
         grads['W1'] = numerical_gradient(loss_W, self.params['W1']) # numerical_gradient function is imported
@@ -106,5 +110,3 @@ class TwoLayerNet:
         grads['b2'] = self.layers['Affine2'].db
 
         return grads
-
-

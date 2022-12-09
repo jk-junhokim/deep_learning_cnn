@@ -1,8 +1,8 @@
 import sys, os
 sys.path.append(os.pardir)
 import numpy as np
-from common.function.functions import softmax, cross_entropy_error
-from common.gradient.gradients import numerical_gradient
+from common.functions import softmax, cross_entropy_error
+from common.gradients import numerical_gradient
 
 """
 Create an array of the given shape and

@@ -42,15 +42,16 @@ for i in range(iters_num):
     x_batch = x_train[batch_mask] # select the row number(=image number) from train data
     t_batch = t_train[batch_mask]
 
-    # Gradient Calculations (the numerical way)
-    grad = network.multivariable_gradient(x_batch, t_batch)
+    # Gradient Calculations
+    # grad = network.multivariable_gradient(x_batch, t_batch) # Numerical Method
+    grad = network.gradient(x_batch, t_batch) # Backpropogation Method (higher efficiency)
 
     # Gradient Descent
     for key in ('W1', 'b1', 'W2', 'b2'):
         network.params[key] -= learning_rate * grad[key]
 
     # Track Training Curve
-    loss = network.loss(x_batch, t_batch) # should improve after every gradient descent
+    loss = network.loss(x_batch, t_batch) # outpu should decrease after every gradient descent
     train_loss_list.append(loss)
 
     # Accuracy per Epoch (uses updated weight, bias variables)
@@ -63,12 +64,12 @@ for i in range(iters_num):
         
     
 # Draw Graph
-markers = {'train': 'o', 'test': 's'}
-x = np.arange(len(train_acc_list))
-plt.plot(x, train_acc_list, label='train acc')
-plt.plot(x, test_acc_list, label='test acc', linestyle='--')
-plt.xlabel("epochs")
-plt.ylabel("accuracy")
-plt.ylim(0, 1.0)
-plt.legend(loc='lower right')
-plt.show()
+# markers = {'train': 'o', 'test': 's'}
+# x = np.arange(len(train_acc_list))
+# plt.plot(x, train_acc_list, label='train acc')
+# plt.plot(x, test_acc_list, label='test acc', linestyle='--')
+# plt.xlabel("epochs")
+# plt.ylabel("accuracy")
+# plt.ylim(0, 1.0)
+# plt.legend(loc='lower right')
+# plt.show()

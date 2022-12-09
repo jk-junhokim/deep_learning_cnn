@@ -17,5 +17,5 @@ grad_backpropagation = network.gradient(x_batch, t_batch)
 
 # difference between grad_numerical method & grad_backpropagation method
 for key in grad_multivariable.keys():
-    diff = np.average(np.abs(grad_backprop[key] - grad_multivariable[key]))
+    diff = np.average(np.abs(grad_backpropagation[key] - grad_multivariable[key]))
     print(key + ":" + str(diff))
