@@ -1,1 +1,1 @@
-from networks.train_two_layer_net import *
+from hyperparameter.weight_initialization import *
