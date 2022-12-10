@@ -54,12 +54,12 @@ for i in range(iters_num):
         
     
 # Draw Graph
-# markers = {'train': 'o', 'test': 's'}
-# x = np.arange(len(train_acc_list))
-# plt.plot(x, train_acc_list, label='train acc')
-# plt.plot(x, test_acc_list, label='test acc', linestyle='--')
-# plt.xlabel("epochs")
-# plt.ylabel("accuracy")
-# plt.ylim(0, 1.0)
-# plt.legend(loc='lower right')
-# plt.show()
+markers = {'train': 'o', 'test': 's'}
+x = np.arange(len(train_acc_list))
+plt.plot(x, train_acc_list, label='train acc')
+plt.plot(x, test_acc_list, label='test acc', linestyle='--')
+plt.xlabel("epochs")
+plt.ylabel("accuracy")
+plt.ylim(0, 1.0)
+plt.legend(loc='lower right')
+plt.show()
