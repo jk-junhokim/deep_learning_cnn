@@ -41,13 +41,13 @@ class Affine:
         self.b = b
 
         self.x = None
-        # self.original_x_shape = None
+        self.original_x_shape = None
         self.dW = None
         self.db = None
 
     def forward(self, x):
-        # self.original_x_shape = x.shape
-        # x = x.reshape(x.shape[0], -1)
+        self.original_x_shape = x.shape
+        x = x.reshape(x.shape[0], -1)
 
         self.x = x
         out = np.dot(self.x, self.W) + self.b
@@ -59,7 +59,7 @@ class Affine:
         self.dW = np.dot(self.x.T, dout)
         self.db = np.sum(dout, axis = 0)
 
-        # dx = dx.reshape(self.original_x_shape)
+        dx = dx.reshape(self.original_x_shape)
 
         return dx
 
@@ -78,16 +78,16 @@ class SoftmaxWithLoss:
 
     def backward(self, dout=1):
 
-        # batch_size = self.t.shape[0]
-        # if self.t.size == self.y.size:
-        #     dx = (self.y - self.t) / batch_size
-        # else:
-        #     dx = self.y.copy()
-        #     dx[np.arange(batch_size), self.t] -= 1
-        #     dx = dx / batch_size
-
         batch_size = self.t.shape[0]
-        dx = (self.y - self.t) / batch_size
+        if self.t.size == self.y.size:
+            dx = (self.y - self.t) / batch_size
+        else:
+            dx = self.y.copy()
+            dx[np.arange(batch_size), self.t] -= 1
+            dx = dx / batch_size
+
+        # batch_size = self.t.shape[0]
+        # dx = (self.y - self.t) / batch_size
 
         return dx
 
@@ -170,3 +170,18 @@ class BatchNormalization:
         self.dbeta = dbeta
         
         return dx
+
+class Dropout:
+    def __init__(self, dropout_ratio=0.5):
+        self.dropout_ratio = dropout_ratio
+        self.mask = None
+
+    def forward(self, x, train_flg=True):
+        if train_flg:
+            self.mask = np.random.rand(*x.shape) > self.dropout_ratio
+            return x * self.mask
+        else:
+            return x * (1.0 - self.dropout_ratio)
+
+    def backward(self, dout):
+        return dout * self.mask
