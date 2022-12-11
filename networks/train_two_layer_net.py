@@ -1,6 +1,5 @@
 import sys, os
 import numpy as np
-# sys.path.append(os.pardir)
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from mnist_dataset.mnist import load_mnist
 from networks.two_layer_net import TwoLayerNet

@@ -1,21 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import math
 
 ### ACTIVATION FUNCTIONS ###
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
-
 def ReLU(x):
     return np.maximum(0, x)
-
 
 def tanh(x):
     return np.tanh(x)
     
 ### ACTIVATION LAYER DISTRIBUTION PER WEIGHT INITIALIZATION ###
-
 node_num = 100  # node per hidden layer
 weight_initialization_var = [1, 0.01, np.sqrt(1.0 / node_num), np.sqrt(2.0 / node_num)]
 activation_func = [sigmoid, ReLU, tanh]
@@ -36,7 +32,6 @@ def draw_histogram(activations):
         plt.hist(a.flatten(), 30, range=(0,1))
     plt.show()
 
-
 for i in range(len(weight_initialization_var)):
     for j in range(len(activation_func)):
         activations = {}
@@ -51,3 +46,4 @@ for i in range(len(weight_initialization_var)):
             activations[k] = z
         
         draw_histogram(activations)
+        
