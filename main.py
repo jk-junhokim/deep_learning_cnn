@@ -1,1 +1,1 @@
-from hyperparameter.batch_normalization import *
+from hyperparameter.weight_decay import *
