@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from mnist_dataset.mnist import load_mnist
 from networks.multi_layer_net import MultiLayerNet
-from common.train_network import Trainer
+from common.trainer import Trainer
 
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True)
 
