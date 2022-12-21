@@ -32,19 +32,18 @@ def conv_output_size(input_size, filter_size, stride=1, pad=0):
 
 
 def im2col(input_data, filter_h, filter_w, stride=1, pad=0):
-    """다수의 이미지를 입력받아 2차원 배열로 변환한다(평탄화).
+    """
+    Reduces Dimension of Input Data
     
     Parameters
-    ----------
-    input_data : 4차원 배열 형태의 입력 데이터(이미지 수, 채널 수, 높이, 너비)
-    filter_h : 필터의 높이
-    filter_w : 필터의 너비
-    stride : 스트라이드
-    pad : 패딩
+    input_data : (number of batch, channel, height, width)
+    filter_h : height
+    filter_w : width
+    pad : padding
+    stride : stride
     
-    Returns
-    -------
-    col : 2차원 배열
+    Returns:
+    col : 2 dimensional array
     """
     N, C, H, W = input_data.shape
     out_h = (H + 2*pad - filter_h)//stride + 1
@@ -54,29 +53,29 @@ def im2col(input_data, filter_h, filter_w, stride=1, pad=0):
     col = np.zeros((N, C, filter_h, filter_w, out_h, out_w))
 
     for y in range(filter_h):
-        y_max = y + stride*out_h
+        y_max = y + stride * out_h
         for x in range(filter_w):
-            x_max = x + stride*out_w
+            x_max = x + stride * out_w
             col[:, :, y, x, :, :] = img[:, :, y:y_max:stride, x:x_max:stride]
 
     col = col.transpose(0, 4, 5, 1, 2, 3).reshape(N*out_h*out_w, -1)
+    
     return col
 
 def col2im(col, input_shape, filter_h, filter_w, stride=1, pad=0):
-    """(im2col과 반대) 2차원 배열을 입력받아 다수의 이미지 묶음으로 변환한다.
-    
+    """
+    Backward for im2col
+
     Parameters
-    ----------
-    col : 2차원 배열(입력 데이터)
-    input_shape : 원래 이미지 데이터의 형상（예：(10, 1, 28, 28)）
-    filter_h : 필터의 높이
-    filter_w : 필터의 너비
-    stride : 스트라이드
-    pad : 패딩
+    col : 2 dimensional matrix
+    input_shape : original data shape（ex. (10, 1, 28, 28)）
+    filter_h : filter height
+    filter_w : filter width
+    stride : stide
+    pad : padding
     
     Returns
-    -------
-    img : 변환된 이미지들
+    img : transformed images
     """
     N, C, H, W = input_shape
     out_h = (H + 2*pad - filter_h)//stride + 1
