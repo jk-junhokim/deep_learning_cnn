@@ -1,7 +1,4 @@
-import numpy as np
-
-def function_2(x):
-    return x[0]**2 + x[1]**2    
+import numpy as np 
 
 ### NUMERICAL GRADIENT FOR ONE DIMENSIONAL MATRIX ###
 def numerical_gradient_1d(f, x):
@@ -44,15 +41,6 @@ def numerical_gradient(f, x):
         
     return grad
 
-"""
-test1 = numerical_gradient(function_2, np.array([3.0, 4.0]))
-test2 = numerical_gradient(function_2, np.array([0.0, 2.0]))
-test3 = numerical_gradient(function_2, np.array([3.0, 0.0]))
-print(test1)
-print(test2)
-print(test3)
-"""
-
     
 ### GRADIENT DESCENT TO FIND THE MIN VAL POINT ###
 def gradient_descent(f, init_x, lr, step_num):
@@ -63,23 +51,3 @@ def gradient_descent(f, init_x, lr, step_num):
         x -= lr * grad
         
     return x # this is a shallow copy of init_x
-
-"""
-##### The gradient_descent function returns a updated init_x variable.
-You need to initialze the init_x variable for each test. #####
-
-# learning rate = 0.1
-init_x = np.array([-3.0, 4.0]) # equal starting point
-test1 = gradient_descent(function_2, init_x, 0.1, 100)
-print(test1) # closest to (0, 0)
-
-# learning rate = 10.0
-init_x = np.array([-3.0, 4.0]) # equal starting point
-test2 = gradient_descent(function_2, init_x, 10.0, 100)
-print(test2) # diverges
-
-# learning rate = 1e-10
-init_x = np.array([-3.0, 4.0]) # equal starting point
-test3 = gradient_descent(function_2, init_x, 1e-10, 100)
-print(test3) # stops learning before reaching minimum value
-"""

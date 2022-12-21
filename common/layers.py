@@ -3,8 +3,6 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from common.functions import *
 
-
-# Version for Backpropogation Gradient Descent Model
 class Relu:
     def __init__(self):
         self.mask = None
@@ -39,21 +37,17 @@ class Sigmoid:
 
 class Affine:
     def __init__(self, W, b):
-        # initialize weight, bias from TwoLayerNet __init__
         self.W = W
         self.b = b
 
-        # later going to use these variables
         self.x = None
-        # self.original_x_shape = None
-        # differentiate weight & bias
+        self.original_x_shape = None
         self.dW = None
         self.db = None
 
     def forward(self, x):
-        # tensor
-        # self.original_x_shape = x.shape
-        # x = x.reshape(x.shape[0], -1)
+        self.original_x_shape = x.shape
+        x = x.reshape(x.shape[0], -1)
 
         self.x = x
         out = np.dot(self.x, self.W) + self.b
@@ -65,7 +59,7 @@ class Affine:
         self.dW = np.dot(self.x.T, dout)
         self.db = np.sum(dout, axis = 0)
 
-        # dx = dx.reshape(self.original_x_shape)
+        dx = dx.reshape(self.original_x_shape)
 
         return dx
 
@@ -84,123 +78,110 @@ class SoftmaxWithLoss:
 
     def backward(self, dout=1):
 
-        # batch_size = self.t.shape[0]
-        # if self.t.size == self.y.size:
-        #     dx = (self.y - self.t) / batch_size
-        # else:
-        #     dx = self.y.copy()
-        #     dx[np.arange(batch_size), self.t] -= 1
-        #     dx = dx / batch_size
-
         batch_size = self.t.shape[0]
-        dx = (self.y - self.t) / batch_size
+        if self.t.size == self.y.size:
+            dx = (self.y - self.t) / batch_size
+        else:
+            dx = self.y.copy()
+            dx[np.arange(batch_size), self.t] -= 1
+            dx = dx / batch_size
+
+        # batch_size = self.t.shape[0]
+        # dx = (self.y - self.t) / batch_size
 
         return dx
-"""
-# Version for Simple Multivariable Gradient Descent Model
-class AddLayer:
-    def __init__(self):
-        pass
 
-    def forward(self, x, y):
-        out = x + y
+class BatchNormalization:
+    def __init__(self, gamma, beta, momentum=0.9, running_mean=None, running_var=None):
+        self.gamma = gamma
+        self.beta = beta
+        self.momentum = momentum
+        self.input_shape = None 
 
+        # mean & variant
+        self.running_mean = running_mean
+        self.running_var = running_var  
+        
+        # need this for backward prop
+        self.batch_size = None
+        self.xc = None
+        self.std = None
+        self.dgamma = None
+        self.dbeta = None
+
+    def forward(self, x, train_flg=True):
+        self.input_shape = x.shape
+        if x.ndim != 2: # for convolutional network
+            N, C, H, W = x.shape
+            x = x.reshape(N, -1)
+
+        out = self.__forward(x, train_flg)
+        
+        return out.reshape(*self.input_shape)
+            
+    def __forward(self, x, train_flg):
+        if self.running_mean is None:
+            N, D = x.shape
+            self.running_mean = np.zeros(D)
+            self.running_var = np.zeros(D)
+                        
+        if train_flg:
+            mu = x.mean(axis=0)
+            xc = x - mu
+            var = np.mean(xc**2, axis=0)
+            std = np.sqrt(var + 10e-7)
+            xn = xc / std
+            
+            self.batch_size = x.shape[0]
+            self.xc = xc
+            self.xn = xn
+            self.std = std
+            self.running_mean = self.momentum * self.running_mean + (1-self.momentum) * mu
+            self.running_var = self.momentum * self.running_var + (1-self.momentum) * var            
+        else:
+            xc = x - self.running_mean
+            xn = xc / ((np.sqrt(self.running_var + 10e-7)))
+            
+        out = self.gamma * xn + self.beta 
         return out
 
     def backward(self, dout):
-        dx = dout * 1
-        dy = dout * 1
+        if dout.ndim != 2:
+            N, C, H, W = dout.shape
+            dout = dout.reshape(N, -1)
 
-        return dx, dy
+        dx = self.__backward(dout)
 
-class MulLayer:
-    def __init__(self):
-        self.x = None
-        self.y = None
+        dx = dx.reshape(*self.input_shape)
+        return dx
 
-    def forward(self, x, y):
-        self.x = x
-        self.y = y
-        out = x * y
+    def __backward(self, dout):
+        dbeta = dout.sum(axis=0)
+        dgamma = np.sum(self.xn * dout, axis=0)
+        dxn = self.gamma * dout
+        dxc = dxn / self.std
+        dstd = -np.sum((dxn * self.xc) / (self.std * self.std), axis=0)
+        dvar = 0.5 * dstd / self.std
+        dxc += (2.0 / self.batch_size) * self.xc * dvar
+        dmu = np.sum(dxc, axis=0)
+        dx = dxc - dmu / self.batch_size
+        
+        self.dgamma = dgamma
+        self.dbeta = dbeta
+        
+        return dx
 
-        return out
-
-    def backward(self, dout):
-        # swap x and y values for backward
-        dx = dout * self.y
-        dy = dout * self.x
-
-        return dx, dy
-
-class Relu:
-    def __init__(self):
+class Dropout:
+    def __init__(self, dropout_ratio=0.5):
+        self.dropout_ratio = dropout_ratio
         self.mask = None
 
-    def forward(self, x):
-        self.mask = (x <= 0)
-        out = x.copy()
-        out[self.mask] = 0
-
-        return out
-
-    def backward(self, dout):
-        dout[self.mask] = 0
-        dx = dout
-
-        return dx
-
-class Sigmoid:
-    def __init__(self):
-        self.out = None
-
-    def forward(self, x):
-        out = 1 / (1 + np.exp(-x))
-        self.out = out
-
-        return out
+    def forward(self, x, train_flg=True):
+        if train_flg:
+            self.mask = np.random.rand(*x.shape) > self.dropout_ratio
+            return x * self.mask
+        else:
+            return x * (1.0 - self.dropout_ratio)
 
     def backward(self, dout):
-        dx = dout * (1.0 - self.out) * self.out
-
-        return dx
-
-class Affine:
-    def __init__(self, w, b):
-        self.W = w
-        self.b = b
-        self.x = None
-        self.dW = None
-        self.db = None
-
-    def forward(self, x, b):
-        self.x = x
-        out = np.dot(x. self.W) + b
-
-        return out
-
-    def backward(self, dout):
-        dx = np.dot(dout, self.W.T)
-        self.dW = np.dot(self.x.T, dout)
-        self.db = np.sum(dout, axis = 0)
-
-        return dx
-
-class SoftmaxWithLoss:
-    def __init__(self):
-        self.loss = None
-        self.y = None
-        self.t = None
-
-    def forward(self, x, t):
-        self.t = t
-        self.y = softmax(x)
-        self.loss = cross_entropy_error(self.y, self.t)
-
-        return self.loss
-
-    def backward(self, dout = 1):
-        batch_size = self.t.shape[0]
-        dx = (self.y - self.t) / batch_size
-
-        return dx
-"""
+        return dout * self.mask
