@@ -11,6 +11,7 @@ class Trainer:
                  epochs=20, mini_batch_size=100,
                  optimizer='SGD', optimizer_param={'lr':0.01}, 
                  evaluate_sample_num_per_epoch=None, verbose=True):
+                 
         self.network = network
         self.verbose = verbose
         self.x_train = x_train
@@ -23,7 +24,7 @@ class Trainer:
 
         # Select Optimizer
         optimizer_class_dict = {'sgd':SGD, 'momentum':Momentum,
-                                'adagrad':AdaGrad}
+                                'adagrad':AdaGrad, 'adam':Adam}
         self.optimizer = optimizer_class_dict[optimizer.lower()](**optimizer_param)
         
         # Variable Initialization
