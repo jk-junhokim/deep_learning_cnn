@@ -1,7 +1,9 @@
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import numpy as np
 import matplotlib.pyplot as plt
 from mnist_dataset.mnist import load_mnist
-from simple_conv_network import SimpleConvNet
+from simple_cnn.simple_convnet import SimpleConvNet
 from common.trainer import Trainer
 
 # read Data

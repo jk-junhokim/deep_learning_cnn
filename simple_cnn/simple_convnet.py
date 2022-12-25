@@ -1,3 +1,5 @@
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import pickle
 import numpy as np
 from collections import OrderedDict
@@ -19,6 +21,7 @@ class SimpleConvNet:
                         elif 'sigmoid' or 'xavier':
                             weight_init_std = 'Xavier'
     """
+    # only one conv layer
     def __init__(self, input_dim=(1, 28, 28), 
                  conv_param={'filter_num':30, 'filter_size':5, 'pad':0, 'stride':1},
                  hidden_size=100, output_size=10, weight_init_std=0.01):
